@@ -128,3 +128,6 @@ class JobCreateUpdateSerializer(serializers.ModelSerializer):
 
 class JobStatusUpdateSerializer(serializers.Serializer):
     status = serializers.ChoiceField(choices=Job.STATUS_CHOICES)
+
+# Alias for backwards compatibility with applications app
+JobSerializer = JobListSerializer
