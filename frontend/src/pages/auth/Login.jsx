@@ -50,11 +50,15 @@ const Login = () => {
         navigate('/candidate/dashboard', { replace: true });
       }
     } catch (err) {
-      const errorMsg =
-        err.response?.data?.detail ||
-        err.response?.data?.error ||
-        'Invalid credentials. Please verify your email and password.';
-      setServerError(errorMsg);
+      if (err.code === 'ERR_NETWORK' || err.message === 'Network Error' || !err.response) {
+        setServerError('Cannot connect to backend server. Please verify backend is running on http://127.0.0.1:8000');
+      } else {
+        const errorMsg =
+          err.response?.data?.detail ||
+          err.response?.data?.error ||
+          'Invalid credentials. Please verify your email and password.';
+        setServerError(errorMsg);
+      }
     } finally {
       setIsLoading(false);
     }
