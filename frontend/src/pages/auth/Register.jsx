@@ -58,17 +58,36 @@ const Register = () => {
     setIsLoading(true);
     setServerError('');
     try {
-      const res = await registerUser(data);
+      const { agreeToTerms, ...payload } = data;
+      const res = await registerUser(payload);
       setSuccessData(res);
     } catch (err) {
       if (err.response?.data) {
         const errorObj = err.response.data;
-        const firstKey = Object.keys(errorObj)[0];
-        const val = errorObj[firstKey];
-        const message = Array.isArray(val) ? val[0] : val;
-        setServerError(`${firstKey.replace('_', ' ')}: ${message}`);
+        if (typeof errorObj === 'string') {
+          setServerError('Server error: Please check that backend services are operating normally.');
+        } else if (errorObj.detail) {
+          setServerError(typeof errorObj.detail === 'string' ? errorObj.detail : JSON.stringify(errorObj.detail));
+        } else if (errorObj.error) {
+          setServerError(typeof errorObj.error === 'string' ? errorObj.error : JSON.stringify(errorObj.error));
+        } else if (errorObj.message) {
+          setServerError(typeof errorObj.message === 'string' ? errorObj.message : JSON.stringify(errorObj.message));
+        } else {
+          const keys = Object.keys(errorObj);
+          if (keys.length > 0) {
+            const firstKey = keys[0];
+            const val = errorObj[firstKey];
+            const message = Array.isArray(val) ? val[0] : (typeof val === 'object' ? JSON.stringify(val) : val);
+            const formattedKey = firstKey.charAt(0).toUpperCase() + firstKey.slice(1).replace(/_/g, ' ');
+            setServerError(`${formattedKey}: ${message}`);
+          } else {
+            setServerError('Registration failed. Please verify your details.');
+          }
+        }
+      } else if (err.code === 'ERR_NETWORK' || err.message === 'Network Error' || !err.response) {
+        setServerError('Cannot connect to backend server. Please verify backend is running on http://127.0.0.1:8000');
       } else {
-        setServerError('Registration failed. Please verify your details and try again.');
+        setServerError(err.message || 'Registration failed. Please verify your details and try again.');
       }
     } finally {
       setIsLoading(false);
