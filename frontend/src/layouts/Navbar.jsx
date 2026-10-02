@@ -35,6 +35,11 @@ const Navbar = () => {
             <Link to="/companies" className="text-slate-600 hover:text-indigo-600 transition-colors">
               Companies
             </Link>
+            {user?.role === 'candidate' && (
+              <Link to="/candidate/profile" className="text-slate-600 hover:text-indigo-600 transition-colors">
+                Profile & Resume
+              </Link>
+            )}
             {user?.role === 'recruiter' && (
               <Link to="/recruiter/dashboard" className="text-slate-600 hover:text-indigo-600 transition-colors">
                 Recruiter Hub
