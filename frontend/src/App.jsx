@@ -12,6 +12,7 @@ import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
 import VerifyEmail from './pages/auth/VerifyEmail';
 import ChangePassword from './pages/auth/ChangePassword';
+import CandidateProfile from './pages/candidate/CandidateProfile';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import RoleRoute from './components/auth/RoleRoute';
 
@@ -65,12 +66,20 @@ function App() {
                 }
               />
 
-              {/* Role-Protected Dashboards */}
+              {/* Role-Protected Dashboards & Profiles */}
               <Route
                 path="/candidate/dashboard"
                 element={
                   <RoleRoute allowedRoles={['candidate']}>
                     <PlaceholderPage title="Candidate Dashboard" subtitle="Manage your profile, resumes, applications, and scheduled interviews." />
+                  </RoleRoute>
+                }
+              />
+              <Route
+                path="/candidate/profile"
+                element={
+                  <RoleRoute allowedRoles={['candidate']}>
+                    <CandidateProfile />
                   </RoleRoute>
                 }
               />
