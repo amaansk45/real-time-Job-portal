@@ -60,11 +60,12 @@ class ResumeUploadView(APIView):
         }, status=status.HTTP_200_OK)
 
     def delete(self, request):
-        profile = getattr(request.user, 'candidate_profile', None)
+        profile = CandidateProfile.objects.filter(user=request.user).first()
         if not profile or not profile.resume:
             return Response({'error': 'No resume found to delete.'}, status=status.HTTP_404_NOT_FOUND)
 
-        profile.resume.delete(save=False)
+        if profile.resume:
+            profile.resume.delete(save=False)
         profile.resume = None
         profile.resume_name = ''
         profile.resume_updated_at = None

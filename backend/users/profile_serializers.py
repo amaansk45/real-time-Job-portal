@@ -9,9 +9,10 @@ class ExperienceSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'created_at')
 
     def validate(self, attrs):
-        start_date = attrs.get('start_date')
-        end_date = attrs.get('end_date')
-        is_current = attrs.get('is_current', False)
+        instance = getattr(self, 'instance', None)
+        start_date = attrs.get('start_date') or (instance.start_date if instance else None)
+        end_date = attrs.get('end_date') if 'end_date' in attrs else (instance.end_date if instance else None)
+        is_current = attrs.get('is_current') if 'is_current' in attrs else (instance.is_current if instance else False)
 
         if not is_current and not end_date:
             raise serializers.ValidationError({"end_date": "End date is required if this is not your current position."})
@@ -26,8 +27,9 @@ class EducationSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'created_at')
 
     def validate(self, attrs):
-        start_year = attrs.get('start_year')
-        end_year = attrs.get('end_year')
+        instance = getattr(self, 'instance', None)
+        start_year = attrs.get('start_year') or (instance.start_year if instance else None)
+        end_year = attrs.get('end_year') if 'end_year' in attrs else (instance.end_year if instance else None)
         if end_year and start_year and end_year < start_year:
             raise serializers.ValidationError({"end_year": "End year cannot be earlier than start year."})
         return attrs
